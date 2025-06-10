@@ -1,0 +1,70 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap");
+body {
+  font-family: "Inter", sans-serif;
+}
+/* Custom scrollbar hide for all compatible browsers */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
+}
+
+/* Custom scrollbar styling (used in ChatMainPage) */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);
+}
+
+.scrollbar-thumb-purple-500 {
+  --tw-scrollbar-thumb: #8b5cf6; /* Tailwind purple-500 */
+}
+.scrollbar-track-transparent {
+  --tw-scrollbar-track: transparent;
+}
+
+/* Blob Animation Keyframes (if not in tailwind.config.js) */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite cubic-bezier(0.6, 0.05, 0.3, 0.9);
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Bubble Pop for messages (if not in tailwind.config.js) */
+@keyframes bubblePop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-bubblePop {
+  animation: bubblePop 0.3s ease-out forwards;
+}
+
+/* Inter Font (added to App.js root div for consistency) */

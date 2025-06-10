@@ -1,9 +1,11 @@
+// src/components/ChatMainPage.js
 import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import ChatHeader from "./chatHeader";
-import MessageList from "./MessageList";
+import ChatMessage from "./chatMessage";
 import MessageInput from "./messageInput";
 
-const ChatContainer = () => {
+const ChatMainPage = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -49,7 +51,7 @@ const ChatContainer = () => {
                 role: "system",
                 content: `You are AniSense.AI - an anime expert assistant. Your rules:
 1. ONLY discuss topics related to Japanese anime, manga, doujinshi, and their creators
-2. Permitted topics:
+2. Permitted topics: 
    - Anime series/movies (e.g., Naruto, Attack on Titan)
    - Manga/Light novels (e.g., One Piece, Berserk)
    - Creators (e.g., Hayao Miyazaki, Eiichiro Oda)
@@ -137,7 +139,7 @@ const ChatContainer = () => {
   };
 
   const handleGenerateSuggestion = async () => {
-    const suggestionPrompt = `Generate an engaging anime-related question about one of these topics:
+    const suggestionPrompt = `Generate an engaging anime-related question about one of these topics: 
   - Popular anime series recommendations
   - Character analysis
   - Manga comparisons
@@ -184,12 +186,50 @@ const ChatContainer = () => {
 
       <ChatHeader chatTitle="AniSense.AI Chat" />
 
-      <MessageList
-        messages={messages}
-        isLoading={isLoading}
-        error={error}
-        messagesEndRef={messagesEndRef}
-      />
+      {/* Message List Area */}
+      <div className="flex-1 p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-transparent z-10">
+        <motion.div
+          className="space-y-4"
+          initial="hidden"
+          animate="visible"
+          variants={{ visible: { transition: { staggerChildren: 0.05 } } }}
+        >
+          {messages.map((msg, index) => (
+            <ChatMessage key={msg.id} message={msg} index={index} />
+          ))}
+          {isLoading && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center justify-start"
+            >
+              <div className="px-4 py-2 rounded-2xl bg-purple-900/50 max-w-xs md:max-w-md">
+                <div className="flex space-x-2">
+                  <div className="w-2 h-2 rounded-full bg-pink-400 animate-bounce"></div>
+                  <div
+                    className="w-2 h-2 rounded-full bg-purple-400 animate-bounce"
+                    style={{ animationDelay: "0.2s" }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 rounded-full bg-blue-400 animate-bounce"
+                    style={{ animationDelay: "0.4s" }}
+                  ></div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="px-4 py-2 rounded-2xl bg-red-900/50 text-red-200 max-w-xs md:max-w-md"
+            >
+              {error}
+            </motion.div>
+          )}
+          <div ref={messagesEndRef} /> {/* Scroll target */}
+        </motion.div>
+      </div>
 
       <MessageInput
         input={input}
@@ -202,4 +242,4 @@ const ChatContainer = () => {
   );
 };
 
-export default ChatContainer;
+export default ChatMainPage;

@@ -1,10 +1,9 @@
 @import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 body {
-  @apply bg-gray-900 text-gray-100;
+  background-color: #111827; /* Tailwind bg-gray-900 */
+  color: #f3f4f6; /* Tailwind text-gray-100 */
+  font-family: "Poppins", sans-serif;
 }
 
 /* Custom scrollbar */
@@ -13,11 +12,45 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-800;
+  background-color: #1f2937; /* Tailwind bg-gray-800 */
+  border-radius: 0.5rem; /* Tailwind rounded-lg */
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gradient-to-b from-pink-500 to-purple-600 rounded-full;
+  background: linear-gradient(
+    to bottom,
+    #ec4899,
+    #8b5cf6
+  ); /* Tailwind from-pink-500 to-purple-600 */
+  border-radius: 9999px; /* Tailwind rounded-full */
+  /* If using Tailwind with PostCSS, @apply can be used in a class, not here */
+  /* @apply bg-gradient-to-b from-pink-500 to-purple-600 rounded-full; */
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(2deg);
+  }
+}
+
+/* Message entry animation */
+@keyframes messageEntry {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-entry {
+  animation: messageEntry 0.3s ease-out forwards;
 }
 
 /* Input autofill styles */
