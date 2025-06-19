@@ -1,203 +1,78 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { v4 as uuid } from "uuid";
 import ChatHeader from "./chatHeader";
 import MessageList from "./MessageList";
 import MessageInput from "./messageInput";
+import { useCurrentUser } from "../customHooks/useCurrentUser";
+import { useChatMessages } from "../customHooks/useChatMessages";
+import { useMessageHandler } from "../customHooks/useMessageHandler";
 
 const ChatContainer = () => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Welcome, fellow anime enthusiast! How can I help you today? Ask me about your favorite series, characters, or even some **trivia**! ✨",
-      sender: "ai",
-      timestamp: "10:00 AM",
-    },
-  ]);
-  const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
+  const [chatSessionID, setChatSessionID] = useState(uuid());
+  const { currentUser, userError } = useCurrentUser();
+  const { messages, addMessage, loadingMessages, chatError } = useChatMessages(
+    currentUser,
+    chatSessionID
+  );
+  const { sendMessage, sending, apiError } = useMessageHandler(
+    currentUser,
+    addMessage,
+    chatSessionID
+  );
+  const [input, setInput] = useState("");
 
-  // Function to scroll to the bottom of the messages list
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  // Scroll to bottom whenever messages update
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const callGPTAPI = async (prompt) => {
-    try {
-      setIsLoading(true);
-      setError(null);
+  const handleGenerateSuggestion = async () => {
+    const prompt = `Ask me a fun, anime-related question. Choose from topics like characters, history, trivia, genres, or conventions. Keep it brief and interesting.`;
 
-      const response = await fetch(
-        "https://openrouter.ai/api/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
-            "HTTP-Referer": "https://your-anime-chat-app.com", // Replace with your actual site URL
-            "X-Title": "AniSense.AI Anime Chat", // Replace with your site name
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "deepseek/deepseek-r1-0528-qwen3-8b:free",
-            messages: [
-              {
-                role: "system",
-                content: `You are AniSense.AI - an anime expert assistant. Your rules:
-1. ONLY discuss topics related to Japanese anime, manga, doujinshi, and their creators
-2. Permitted topics:
-   - Anime series/movies (e.g., Naruto, Attack on Titan)
-   - Manga/Light novels (e.g., One Piece, Berserk)
-   - Creators (e.g., Hayao Miyazaki, Eiichiro Oda)
-   - Voice actors (e.g., Maile Flanagan, Yūki Kaji)
-   - Studios (e.g., Studio Ghibli, MAPPA)
-   - Related culture (e.g., cosplay, conventions)
-   - Anime music/OSTs
-   - Merchandise/figures
-3. For NON-ANIME queries:
-   - Politely decline to answer
-   - Explain you're specialized in anime
-   - Suggest an anime-related topic
-4. Use markdown formatting for rich responses
-5. Keep responses engaging and passionate about anime!
-6. If unsure about anime relation, ask clarifying questions`,
-              },
-              {
-                role: "user",
-                content: prompt,
-              },
-            ],
-            temperature: 0.7,
-            max_tokens: 1000,
-          }),
-        }
-      );
+    if (!currentUser) return;
 
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
+    const aiResponse = await sendMessage(prompt, { isSilent: true });
 
-      const data = await response.json();
-      return data.choices[0].message.content;
-    } catch (err) {
-      console.error("Error calling API:", err);
-      setError("Failed to get response. Please try again.");
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSendMessage = async () => {
-    if (input.trim()) {
-      const newMessage = {
-        id: messages.length + 1,
-        text: input.trim(),
-        sender: "user",
+    if (aiResponse) {
+      setInput(aiResponse); // show suggestion in textbox
+    } else {
+      addMessage({
+        id: crypto.randomUUID(),
+        text: "Hmm, I couldn’t find any fresh anime news. Try again in a bit!",
+        sender: "ai",
         timestamp: new Date().toLocaleTimeString("en-US", {
           hour: "2-digit",
           minute: "2-digit",
         }),
-      };
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      setInput("");
-
-      // Get AI response
-      const aiResponse = await callGPTAPI(input.trim());
-
-      if (aiResponse) {
-        const newAiMessage = {
-          id: messages.length + 2,
-          text: aiResponse,
-          sender: "ai",
-          timestamp: new Date().toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        };
-        setMessages((prevMessages) => [...prevMessages, newAiMessage]);
-      } else {
-        // Fallback for API errors
-        const fallbackMessage = {
-          id: messages.length + 2,
-          text: "Sorry, I'm having trouble connecting to the anime knowledge base. Maybe ask about your favorite series?",
-          sender: "ai",
-          timestamp: new Date().toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        };
-        setMessages((prevMessages) => [...prevMessages, fallbackMessage]);
-      }
-    }
-  };
-
-  const handleGenerateSuggestion = async () => {
-    const suggestionPrompt = `Generate an engaging anime-related question about one of these topics:
-  - Popular anime series recommendations
-  - Character analysis
-  - Manga comparisons
-  - Studio or creator insights
-  - Anime history or trivia
-  - Genre-specific recommendations
-  - Underrated gems
-  - Anime music or soundtracks
-  - Cosplay tips
-  - Convention experiences`;
-
-    const suggestion = await callGPTAPI(suggestionPrompt);
-
-    if (suggestion) {
-      setInput(suggestion);
-    } else {
-      // Anime-focused fallback suggestions
-      const animeSuggestions = [
-        "What's the best anime for someone who loves psychological thrillers?",
-        "Can you compare the manga and anime versions of Demon Slayer?",
-        "Who are the most iconic voice actors in the industry?",
-        "What Studio Ghibli film should I watch next?",
-        "Explain the different types of anime genres",
-        "What manga should I read if I enjoyed Attack on Titan?",
-        "Who is the most powerful anime character of all time?",
-        "What are some must-watch anime movies?",
-        "How has anime evolved over the decades?",
-        "Recommend an anime with amazing fight choreography",
-      ];
-      const randomSuggestion =
-        animeSuggestions[Math.floor(Math.random() * animeSuggestions.length)];
-      setInput(randomSuggestion);
+      });
     }
   };
 
   return (
     <div className="flex-1 flex flex-col bg-gray-900 rounded-3xl m-4 shadow-2xl relative overflow-hidden">
-      {/* Background decoration elements for anime vibe */}
-      <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
-        <div className="absolute w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob top-10 left-20"></div>
-        <div className="absolute w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000 top-40 right-10"></div>
-        <div className="absolute w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000 bottom-10 left-10"></div>
-      </div>
-
       <ChatHeader chatTitle="AniSense.AI Chat" />
-
       <MessageList
         messages={messages}
-        isLoading={isLoading}
-        error={error}
+        isLoading={loadingMessages || sending}
+        error={chatError || userError || apiError}
         messagesEndRef={messagesEndRef}
       />
-
       <MessageInput
         input={input}
         setInput={setInput}
-        onSendMessage={handleSendMessage}
+        onSendMessage={() => {
+          if (input.trim()) sendMessage(input);
+          setInput(""); // clear textbox after sending
+        }}
         onGenerateSuggestion={handleGenerateSuggestion}
-        isLoading={isLoading}
+        isLoading={sending || !currentUser}
       />
+
+      {!currentUser && (
+        <div className="p-4 text-center text-yellow-300 bg-gray-800/50 rounded-b-3xl">
+          Please log in to save and load your chat history.
+        </div>
+      )}
     </div>
   );
 };

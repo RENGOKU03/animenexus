@@ -23,7 +23,7 @@ const MessageList = ({ messages, isLoading, error, messagesEndRef }) => {
           >
             <div className="px-4 py-2 rounded-2xl bg-purple-900/50 max-w-[100px] max-h-[100px] flex items-center justify-center overflow-hidden">
               <img
-                src="./images/loading.gif"
+                src="./images/athink.gif"
                 alt="Loading..."
                 className="w-full h-full object-contain"
               />

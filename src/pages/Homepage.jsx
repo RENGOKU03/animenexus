@@ -1,7 +1,6 @@
 import "./homepage.css";
 import AnimeSidebar from "../components/sideBar";
 import { useSelector } from "react-redux";
-import ChatMainPage from "../components/chatMain";
 import ChatContainer from "../components/ChatContainer";
 
 function Homepage() {

@@ -1,4 +1,12 @@
-import { Client, Account, OAuthProvider } from "appwrite";
+import {
+  Client,
+  Account,
+  Databases,
+  Permission,
+  Role,
+  ID,
+  Query,
+} from "appwrite";
 
 export const client = new Client();
 
@@ -7,4 +15,5 @@ client
   .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID);
 
 export const account = new Account(client);
-export { ID } from "appwrite";
+export const databases = new Databases(client);
+export { ID, Permission, Role, Query } from "appwrite";

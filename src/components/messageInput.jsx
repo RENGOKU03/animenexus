@@ -13,6 +13,7 @@ const MessageInput = ({
     if (e.key === "Enter" && !e.shiftKey) {
       // Allow Shift+Enter for new line
       e.preventDefault();
+      a;
       onSendMessage();
     }
   };
@@ -46,7 +47,6 @@ const MessageInput = ({
       >
         <RiSendPlane2Fill size={24} />
       </motion.button>
-      {/* Optional: AI suggestion button */}
       <motion.button
         whileHover={{ scale: 1.1, rotate: -10 }}
         whileTap={{ scale: 0.9 }}
