@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import ChatHeader from "./chatHeader";
-import MessageList from "./MessageList";
 import MessageInput from "./messageInput";
 import { useCurrentUser } from "../customHooks/useCurrentUser";
 import { useChatMessages } from "../customHooks/useChatMessages";
 import { useMessageHandler } from "../customHooks/useMessageHandler";
+import MessageList from "./messageList";
 
 const ChatContainer = () => {
   const messagesEndRef = useRef(null);

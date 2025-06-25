@@ -2,10 +2,7 @@ import {
   Client,
   Account,
   Databases,
-  Permission,
-  Role,
-  ID,
-  Query,
+
 } from "appwrite";
 
 export const client = new Client();

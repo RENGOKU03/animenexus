@@ -1,7 +1,8 @@
 import "./homepage.css";
-import AnimeSidebar from "../components/sideBar";
 import { useSelector } from "react-redux";
 import ChatContainer from "../components/ChatContainer";
+import AnimeSidebar from "../components/SideBar";
+
 
 function Homepage() {
   const user = useSelector((state) => state.auth.user);

@@ -20,7 +20,7 @@ const ProtectedRoute = ({ children }) => {
     const checkAuth = async () => {
       try {
         const user = await account.get();
-        console.log("User is authenticated", user);
+
         dispatch(login(user));
       } catch (error) {
         dispatch(logout());

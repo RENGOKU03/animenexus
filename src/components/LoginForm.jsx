@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import AuthInput from "./AuthInput";
 import SocialLoginButtons from "./SocialLoginButtons";
 import { account } from "../lib/appwrite";
 import { useDispatch } from "react-redux";
 import { login, logout } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
 import ErrorModal from "./errorModal";
+import AuthInput from "./Authinput";
 
 function LoginForm() {
   const [email, setEmail] = useState("");

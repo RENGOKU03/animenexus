@@ -6,12 +6,9 @@ import LoginError from "./components/loginError.jsx";
 import Homepage from "./pages/Homepage.jsx";
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./components/protectedRoute.jsx";
-import Deepseek from "./components/deepseek.jsx";
-
 function App() {
   function PublicRoute({ children }) {
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-    console.log(isAuthenticated);
 
     return isAuthenticated ? <Navigate to="/homepage" replace /> : children;
   }
