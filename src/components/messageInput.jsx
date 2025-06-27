@@ -13,7 +13,7 @@ const MessageInput = ({
     if (e.key === "Enter" && !e.shiftKey) {
       // Allow Shift+Enter for new line
       e.preventDefault();
-      a;
+      if (!input.trim()) return; // Prevent sending empty messages
       onSendMessage();
     }
   };

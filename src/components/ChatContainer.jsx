@@ -1,26 +1,27 @@
 import { useEffect, useRef, useState } from "react";
-import { v4 as uuid } from "uuid";
 import ChatHeader from "./chatHeader";
 import MessageInput from "./messageInput";
-import { useCurrentUser } from "../customHooks/useCurrentUser";
 import { useChatMessages } from "../customHooks/useChatMessages";
 import { useMessageHandler } from "../customHooks/useMessageHandler";
 import MessageList from "./messageList";
+import { useSelector } from "react-redux";
 
 const ChatContainer = () => {
+  const [input, setInput] = useState("");
   const messagesEndRef = useRef(null);
-  const [chatSessionID, setChatSessionID] = useState(uuid());
-  const { currentUser, userError } = useCurrentUser();
-  const { messages, addMessage, loadingMessages, chatError } = useChatMessages(
-    currentUser,
-    chatSessionID
+  const currentUser = useSelector((state) => state.auth.user);
+  const chatSessionID = useSelector((state) => state.auth.chatSessionID);
+  const messages = useSelector(
+    (state) => state.auth.sessionChats[chatSessionID] || []
   );
+
+  const { addMessage, loadingMessages, chatError } =
+    useChatMessages(currentUser);
   const { sendMessage, sending, apiError } = useMessageHandler(
     currentUser,
     addMessage,
     chatSessionID
   );
-  const [input, setInput] = useState("");
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -32,20 +33,6 @@ const ChatContainer = () => {
     if (!currentUser) return;
 
     const aiResponse = await sendMessage(prompt, { isSilent: true });
-
-    if (aiResponse) {
-      setInput(aiResponse); // show suggestion in textbox
-    } else {
-      addMessage({
-        id: crypto.randomUUID(),
-        text: "Hmm, I couldn’t find any fresh anime news. Try again in a bit!",
-        sender: "ai",
-        timestamp: new Date().toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      });
-    }
   };
 
   return (
@@ -54,7 +41,7 @@ const ChatContainer = () => {
       <MessageList
         messages={messages}
         isLoading={loadingMessages || sending}
-        error={chatError || userError || apiError}
+        error={chatError || apiError}
         messagesEndRef={messagesEndRef}
       />
       <MessageInput

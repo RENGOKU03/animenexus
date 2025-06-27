@@ -9,23 +9,21 @@ import {
   RiCloseLine,
   RiMenuLine,
 } from "react-icons/ri";
-import ChatHistoryItem from "./ChatHistory";
 import UserProfile from "./UserProfile";
+import { v4 as uuidv4 } from "uuid";
+import { useDispatch, useSelector } from "react-redux";
+import { setChatSessionID } from "../store/authSlice";
+import ChatHistoryItem from "./ChatHistory";
 
-const AnimeSidebar = ({ username, chatHistory }) => {
+const AnimeSidebar = ({ username }) => {
   const [activeTab, setActiveTab] = useState("chat");
   const [isExpanded, setIsExpanded] = useState(true);
   const [showUserProfile, setShowUserProfile] = useState(false);
-
+  const dispatch = useDispatch();
   const toggleSidebar = () => setIsExpanded(!isExpanded);
   const toggleUserProfile = () => setShowUserProfile(!showUserProfile);
-
-  // Navigation items
-  const navItems = [
-    { id: "newchat", icon: RiHome3Line, color: "text-pink-300" },
-    { id: "chat history", icon: RiMessage2Line, color: "text-blue-300" },
-    { id: "settings", icon: RiSettings3Line, color: "text-green-300" },
-  ];
+  const chatHistory = useSelector((state) => state.auth.sessionChats);
+  console.log("Chat History:", chatHistory);
 
   // Main sidebar content
   const renderSidebarContent = () => (
@@ -44,23 +42,49 @@ const AnimeSidebar = ({ username, chatHistory }) => {
 
       {/* Navigation */}
       <div className="p-4 space-y-2">
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            className={`w-full flex items-center p-3 rounded-xl ${
-              activeTab === item.id
-                ? "bg-purple-700/50"
-                : "hover:bg-purple-800/30"
-            }`}
-            onClick={() => setActiveTab(item.id)}
-          >
-            <item.icon className={`mr-3 ${item.color}`} size={20} />
-            <span>{item.id.charAt(0).toUpperCase() + item.id.slice(1)}</span>
-          </button>
-        ))}
+        <button
+          className={`w-full flex items-center p-3 rounded-xl ${
+            activeTab === "newchat"
+              ? "bg-purple-700/50"
+              : "hover:bg-purple-800/30"
+          }`}
+          onClick={() => {
+            const newSessionID = uuidv4();
+            console.log("New Chat Session ID:", newSessionID);
+            dispatch(setChatSessionID(newSessionID));
+            setActiveTab("newchat");
+          }}
+        >
+          <RiHome3Line className="mr-3 text-pink-300" size={20} />
+          <span>New Chat</span>
+        </button>
+
+        <button
+          className={`w-full flex items-center p-3 rounded-xl ${
+            activeTab === "chat history"
+              ? "bg-purple-700/50"
+              : "hover:bg-purple-800/30"
+          }`}
+          onClick={() => setActiveTab("chat history")}
+        >
+          <RiMessage2Line className="mr-3 text-blue-300" size={20} />
+          <span>Chat History</span>
+        </button>
+
+        <button
+          className={`w-full flex items-center p-3 rounded-xl ${
+            activeTab === "settings"
+              ? "bg-purple-700/50"
+              : "hover:bg-purple-800/30"
+          }`}
+          onClick={() => setActiveTab("settings")}
+        >
+          <RiSettings3Line className="mr-3 text-green-300" size={20} />
+          <span>Settings</span>
+        </button>
       </div>
 
-      {/* Chat History */}
+      {/* Chat History  */}
       <div className="p-4 flex-1 overflow-y-auto">
         <div className="flex justify-between mb-3">
           <h2 className="text-sm font-semibold text-purple-300 flex items-center">
@@ -70,17 +94,7 @@ const AnimeSidebar = ({ username, chatHistory }) => {
           <span className="text-xs text-purple-300">{chatHistory?.length}</span>
         </div>
         <div className="space-y-2">
-          {chatHistory?.map((chat) => (
-            <ChatHistoryItem
-              key={chat.id}
-              chat={chat}
-              isActive={activeTab === `chat-${chat.id}`}
-              onClick={() => {
-                setActiveTab(`chat-${chat.id}`);
-                onSessionSelect(chat.id);
-              }}
-            />
-          ))}
+          <ChatHistoryItem />
         </div>
       </div>
 

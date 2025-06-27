@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import ChatMessage from "./chatMessage";
 
 const MessageList = ({ messages, isLoading, error, messagesEndRef }) => {
+  console.log("Rendering MessageList with messages:", messages);
+
   return (
     <div className="flex-1 p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-transparent z-10">
       <motion.div
