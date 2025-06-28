@@ -8,23 +8,58 @@ import {
 } from "react-icons/ri";
 import { account } from "../lib/appwrite";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux"; // Import useDispatch
+import { logout as logoutAction } from "../store/authSlice"; // Import the logout action from Redux
 
 const UserProfile = ({ onClose }) => {
+  const dispatch = useDispatch(); // Initialize dispatch hook
   const user = useSelector((state) => state.auth.user);
   const email = user?.email;
-  const registration = user?.registration;
+  // user?.registration is typically an ISO 8601 string or Unix timestamp.
+  // We'll format it for better readability.
+  const registrationTimestamp = user?.registration;
   const username = user?.name;
+  const chatSessions = useSelector((state) => state.auth.sessionChats); // Renamed for clarity
 
   const navigate = useNavigate();
+
+  /**
+   * Handles user logout:
+   * 1. Deletes the current Appwrite session.
+   * 2. Dispatches the Redux logout action to clear client-side state.
+   * 3. Navigates the user to the login page.
+   */
   async function handleLogout() {
-    await account.deleteSession("current");
-    navigate("/login", { replace: true });
+    try {
+      await account.deleteSession("current"); // Invalidate the current session on Appwrite
+      dispatch(logoutAction()); // Dispatch Redux logout action to clear global state
+      navigate("/login", { replace: true }); // Redirect to login page
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Optionally, show an error message to the user
+      alert("Logout failed. Please try again."); // Use a custom modal in a real app
+    }
   }
+
+  // Calculate the total number of chat sessions
+  // chatSessions is an object like { 'sessionID1': [...messages], 'sessionID2': [...] }
+  const totalChatSessions = Object.keys(chatSessions || {}).length;
+
+  // Format the registration date for display
+  const formattedRegistrationDate = registrationTimestamp
+    ? new Date(registrationTimestamp).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "N/A"; // Display N/A if registration date is not available
+
+  console.log("User Profile chatSessions object:", chatSessions); // Log the object as expected
+
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        {/* Backdrop */}
+        {/* Backdrop for modal closure */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -39,11 +74,13 @@ const UserProfile = ({ onClose }) => {
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.8, opacity: 0 }}
           transition={{ type: "spring", damping: 25 }}
-          className="relative bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl shadow-2xl border border-purple-700/50 w-full max-w-md z-10 overflow-hidden"
+          className="relative bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl shadow-2xl border border-purple-700/50 w-full max-w-md z-10 overflow-hidden text-white"
         >
+          {/* Close Button */}
           <button
             className="absolute top-4 right-4 text-gray-300 hover:text-white transition-colors"
             onClick={onClose}
+            aria-label="Close profile"
           >
             <RiCloseLine size={24} />
           </button>
@@ -67,7 +104,9 @@ const UserProfile = ({ onClose }) => {
                 </div>
               </motion.div>
 
-              <h2 className="text-xl font-bold">{username}</h2>
+              <h2 className="text-xl font-bold text-white">
+                {username || "Guest User"}
+              </h2>
               <div className="flex items-center mt-1 text-pink-300">
                 <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
                 <span>Online</span>
@@ -76,27 +115,29 @@ const UserProfile = ({ onClose }) => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-2 gap-4 mb-6">
               <motion.div
                 className="bg-purple-800/30 rounded-xl p-3 text-center border border-purple-700/50"
                 whileHover={{ y: -5 }}
               >
-                <div className="text-2xl font-bold text-pink-400">42</div>
+                {/* Displaying the count of sessions */}
+                <div className="text-2xl font-bold text-pink-400">
+                  {totalChatSessions}
+                </div>
                 <div className="text-xs text-purple-300">Chats</div>
               </motion.div>
+
               <motion.div
                 className="bg-purple-800/30 rounded-xl p-3 text-center border border-purple-700/50"
                 whileHover={{ y: -5 }}
               >
-                <div className="text-2xl font-bold text-blue-400">128</div>
-                <div className="text-xs text-purple-300">Anime</div>
-              </motion.div>
-              <motion.div
-                className="bg-purple-800/30 rounded-xl p-3 text-center border border-purple-700/50"
-                whileHover={{ y: -5 }}
-              >
-                <div className="text-2xl font-bold text-green-400">5</div>
-                <div className="text-xs text-purple-300">Years</div>
+                <div className="text-2xl font-bold text-green-400">
+                  {Math.floor(
+                    (Date.now() - new Date(registrationTimestamp).getTime()) /
+                      (1000 * 60 * 60 * 24)
+                  )}
+                </div>
+                <div className="text-xs text-purple-300">Days</div>
               </motion.div>
             </div>
 
@@ -106,7 +147,7 @@ const UserProfile = ({ onClose }) => {
                 <RiMailLine className="text-pink-400 mr-3" size={20} />
                 <div>
                   <div className="text-xs text-purple-300">Email</div>
-                  <div className="text-sm">{email}</div>
+                  <div className="text-sm">{email || "N/A"}</div>
                 </div>
               </div>
 
@@ -114,7 +155,8 @@ const UserProfile = ({ onClose }) => {
                 <RiShieldUserLine className="text-blue-400 mr-3" size={20} />
                 <div>
                   <div className="text-xs text-purple-300">Member Since</div>
-                  <div className="text-sm">{registration}</div>
+                  {/* Displaying the formatted registration date */}
+                  <div className="text-sm">{formattedRegistrationDate}</div>
                 </div>
               </div>
             </div>
@@ -125,6 +167,7 @@ const UserProfile = ({ onClose }) => {
               whileTap={{ scale: 0.98 }}
               className="w-full mt-6 p-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-medium flex items-center justify-center cursor-pointer transition-colors hover:bg-gradient-to-r hover:from-pink-700 hover:to-purple-700 border border-purple-700/50"
               onClick={handleLogout}
+              aria-label="Logout"
             >
               <RiLogoutCircleLine className="mr-2" />
               Logout

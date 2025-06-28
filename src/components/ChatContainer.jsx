@@ -28,7 +28,7 @@ const ChatContainer = () => {
   }, [messages]);
 
   const handleGenerateSuggestion = async () => {
-    const prompt = `Ask me a fun, anime-related question. Choose from topics like characters, history, trivia, genres, or conventions. Keep it brief and interesting.`;
+    const prompt = `Give me a fun, exciting or tirvial anime fact Choose from topics like characters, history, trivia, genres, or conventions. Keep it brief and interesting.`;
 
     if (!currentUser) return;
 

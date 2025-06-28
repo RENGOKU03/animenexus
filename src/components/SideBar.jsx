@@ -39,7 +39,6 @@ const AnimeSidebar = ({ username }) => {
           </h1>
         </div>
       </div>
-
       {/* Navigation */}
       <div className="p-4 space-y-2">
         <button
@@ -58,7 +57,7 @@ const AnimeSidebar = ({ username }) => {
           <RiHome3Line className="mr-3 text-pink-300" size={20} />
           <span>New Chat</span>
         </button>
-
+        {/* 
         <button
           className={`w-full flex items-center p-3 rounded-xl ${
             activeTab === "chat history"
@@ -69,7 +68,7 @@ const AnimeSidebar = ({ username }) => {
         >
           <RiMessage2Line className="mr-3 text-blue-300" size={20} />
           <span>Chat History</span>
-        </button>
+        </button> */}
 
         <button
           className={`w-full flex items-center p-3 rounded-xl ${
@@ -83,8 +82,6 @@ const AnimeSidebar = ({ username }) => {
           <span>Settings</span>
         </button>
       </div>
-
-      {/* Chat History  */}
       <div className="p-4 flex-1 overflow-y-auto">
         <div className="flex justify-between mb-3">
           <h2 className="text-sm font-semibold text-purple-300 flex items-center">
@@ -97,7 +94,6 @@ const AnimeSidebar = ({ username }) => {
           <ChatHistoryItem />
         </div>
       </div>
-
       {/* User Section */}
       <div className="p-4 border-t border-purple-700/50">
         <button
