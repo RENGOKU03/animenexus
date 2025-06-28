@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react"; // Added useCallback for memoizing functions
 import { ID, databases, Permission, Role } from "../lib/appwrite";
 import { v4 as uuid } from "uuid";
+import { toast } from "react-toastify";
 
 // Define Appwrite IDs from environment variables
 const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
@@ -49,7 +50,7 @@ export const useMessageHandler = (currentUser, addMessage, chatSessionID) => {
     async (msg) => {
       // Only attempt to save if a user is logged in
       if (!currentUser) {
-        console.warn("Attempted to save message without a logged-in user.");
+        toast.warn("Attempted to save message without a logged-in user.");
         return;
       }
       try {
@@ -73,7 +74,7 @@ export const useMessageHandler = (currentUser, addMessage, chatSessionID) => {
         // Removed the incorrect call to useChatMessages(currentUser) here.
         // The useChatMessages hook should handle listening for database changes on its own.
       } catch (err) {
-        console.error("Error saving message to Appwrite:", err);
+        toast.error("Error saving message to Appwrite: ");
         setApiError("Failed to save message history."); // Set an error if saving fails
       }
     },
@@ -138,7 +139,7 @@ export const useMessageHandler = (currentUser, addMessage, chatSessionID) => {
         if (!res.ok) {
           // If the API response is not OK (e.g., 4xx, 5xx status)
           const errorData = await res.json();
-          console.error("AI API Error Response:", errorData);
+          toast.error("AI API Error Response:");
           throw new Error(
             `AI API Error: ${res.status} - ${
               errorData.message || "Unknown error"
@@ -148,7 +149,8 @@ export const useMessageHandler = (currentUser, addMessage, chatSessionID) => {
         const data = await res.json();
         return data.choices[0].message.content; // Extract the AI's message content
       } catch (err) {
-        console.error("Error calling AI API:", err);
+        toast.error("AI API Error: ");
+
         setApiError("AniSense.AI failed to respond. Please try again."); // User-friendly error message
         return null;
       }
@@ -208,7 +210,7 @@ export const useMessageHandler = (currentUser, addMessage, chatSessionID) => {
 
         return aiReply; // Return the AI's response for potential further use
       } catch (err) {
-        console.error("Error in sendMessage flow:", err);
+        toast.error("Error in sendMessage flow:");
         setApiError("Something went wrong during the chat. Please try again."); // Generic error for the overall flow
         return null;
       } finally {

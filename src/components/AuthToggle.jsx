@@ -1,12 +1,5 @@
 import React from "react";
 
-/**
- * AuthToggle component provides a link to switch between login and registration forms.
- *
- * @param {object} props - Component props.
- * @param {boolean} props.isLogin - True if currently on the login form, false for registration.
- * @param {function} props.setIsLogin - Function to update the isLogin state in the parent.
- */
 function AuthToggle({ isLogin, setIsLogin }) {
   return (
     <div className="mt-4 text-center text-gray-200 text-sm">

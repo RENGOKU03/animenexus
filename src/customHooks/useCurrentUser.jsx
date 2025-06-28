@@ -11,8 +11,6 @@ export const useCurrentUser = () => {
         setLoadingUser(true); // Start loading
         const user = await account.get();
         setCurrentUser(user);
-
-        console.log("Current user:", user);
       } catch (err) {
         setUserError("Please log in to save chat history.");
       } finally {

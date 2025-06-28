@@ -10,6 +10,7 @@ import { account } from "../lib/appwrite";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux"; // Import useDispatch
 import { logout as logoutAction } from "../store/authSlice"; // Import the logout action from Redux
+import { toast } from "react-toastify";
 
 const UserProfile = ({ onClose }) => {
   const dispatch = useDispatch(); // Initialize dispatch hook
@@ -35,7 +36,7 @@ const UserProfile = ({ onClose }) => {
       dispatch(logoutAction()); // Dispatch Redux logout action to clear global state
       navigate("/login", { replace: true }); // Redirect to login page
     } catch (error) {
-      console.error("Error during logout:", error);
+      toast.error("Error during logout:", error);
       // Optionally, show an error message to the user
       alert("Logout failed. Please try again."); // Use a custom modal in a real app
     }
@@ -53,8 +54,6 @@ const UserProfile = ({ onClose }) => {
         day: "numeric",
       })
     : "N/A"; // Display N/A if registration date is not available
-
-  console.log("User Profile chatSessions object:", chatSessions); // Log the object as expected
 
   return (
     <AnimatePresence>

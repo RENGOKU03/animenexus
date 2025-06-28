@@ -80,7 +80,7 @@ export const useChatMessages = (currentUser, chatSessionID) => {
         // This action should update or initialize the sessions in your authSlice.
         dispatch(addMessageToSessionWhenEmpty(groupedSessions));
       } catch (err) {
-        console.error("Error loading chat history:", err);
+        toast.error("Error loading chat history:", err);
         setChatError("Failed to load chat history.");
         setMessages([]); // Clear messages on error
       } finally {

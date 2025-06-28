@@ -1,9 +1,20 @@
 import { motion } from "framer-motion";
 import ChatMessage from "./chatMessage";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 const MessageList = ({ messages, isLoading, error, messagesEndRef }) => {
-  console.log("Rendering MessageList with messages:", messages);
-
+  useEffect(() => {
+    if (isLoading) {
+      toast.info("Loading messages...", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeButton: false,
+        className: "text-sm text-white bg-purple-600 shadow-md",
+      });
+    }
+  }, [isLoading]);
   return (
     <div className="flex-1 p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-transparent z-10">
       <motion.div

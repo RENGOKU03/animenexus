@@ -23,7 +23,6 @@ const AnimeSidebar = ({ username }) => {
   const toggleSidebar = () => setIsExpanded(!isExpanded);
   const toggleUserProfile = () => setShowUserProfile(!showUserProfile);
   const chatHistory = useSelector((state) => state.auth.sessionChats);
-  console.log("Chat History:", chatHistory);
 
   // Main sidebar content
   const renderSidebarContent = () => (
@@ -49,7 +48,6 @@ const AnimeSidebar = ({ username }) => {
           }`}
           onClick={() => {
             const newSessionID = uuidv4();
-            console.log("New Chat Session ID:", newSessionID);
             dispatch(setChatSessionID(newSessionID));
             setActiveTab("newchat");
           }}

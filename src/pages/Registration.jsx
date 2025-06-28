@@ -4,6 +4,7 @@ import { account, ID } from "../lib/appwrite";
 import { useDispatch } from "react-redux";
 import { login, logout } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Registration() {
   const [userName, setUserName] = useState("");
@@ -20,11 +21,10 @@ function Registration() {
     try {
       await account.createEmailPasswordSession(email, password);
       const user = await account.get();
-      console.log(user);
       dispatch(login(user));
       navigate("/homepage", { replace: true });
     } catch (error) {
-      console.error("Login error:", error);
+      toast.error("Login error:");
       dispatch(logout());
       setError("Login failed. Please check your credentials.");
     }
