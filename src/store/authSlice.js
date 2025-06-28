@@ -9,19 +9,11 @@ const authSlice = createSlice({
     sessionChats: {}, // Object to store messages grouped by chatSessionID
   },
   reducers: {
-    /**
-     * Sets the authenticated user and updates authentication status.
-     * @param {object} state - The current Redux state.
-     * @param {object} action - Action containing the user payload.
-     */
     login(state, action) {
       state.user = action.payload;
       state.isAuthenticated = true;
     },
-    /**
-     * Resets user and authentication status on logout.
-     * @param {object} state - The current Redux state.
-     */
+
     logout(state) {
       state.user = null;
       state.isAuthenticated = false;

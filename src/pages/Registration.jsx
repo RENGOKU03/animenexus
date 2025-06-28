@@ -29,18 +29,18 @@ function Registration() {
       setError("Login failed. Please check your credentials.");
     }
   }
-  async function handleLoginWithGithub() {
-    try {
-      account.createOAuth2Session(
-        "github",
-        "http://localhost:5173/homepage",
-        "http://localhost:5173/loginError"
-      );
-    } catch (error) {
-      console.error("Login with GitHub failed:", error);
-      setError("Login with GitHub failed. Please try again.");
-    }
-  }
+  // async function handleLoginWithGithub() {
+  //   try {
+  //     account.createOAuth2Session(
+  //       "github",
+  //       "http://localhost:5173/homepage",
+  //       "http://localhost:5173/loginError"
+  //     );
+  //   } catch (error) {
+  //     console.error("Login with GitHub failed:", error);
+  //     setError("Login with GitHub failed. Please try again.");
+  //   }
+  // }
   const handleRegister = async () => {
     if (password !== confirmPassword) {
       setError("Passwords do not match");
@@ -66,7 +66,7 @@ function Registration() {
       )}
 
       {/* Social Login Buttons at the top */}
-      <div className="flex flex-col space-y-2 mb-2">
+      {/* <div className="flex flex-col space-y-2 mb-2">
         <button
           type="button"
           className="w-full flex items-center justify-center bg-white/10 border border-white/30 text-white py-2 px-4 rounded-lg shadow-md text-sm transform transition duration-300 ease-in-out hover:scale-105 hover:bg-white/20 active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-70"
@@ -84,15 +84,15 @@ function Registration() {
           </svg>
           Sign up with GitHub
         </button>
-      </div>
+      </div> */}
 
       <div className="relative flex items-center justify-center my-4">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t border-white/20"></span>
         </div>
-        <div className="relative px-4 text-xs text-gray-300 bg-white/15 rounded-full">
+        {/* <div className="relative px-4 text-xs text-gray-300 bg-white/15 rounded-full">
           Or register with email
-        </div>
+        </div> */}
       </div>
 
       <div>

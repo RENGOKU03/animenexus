@@ -2,8 +2,10 @@ import "./homepage.css";
 import { useSelector } from "react-redux";
 import ChatContainer from "../components/ChatContainer";
 import AnimeSidebar from "../components/SideBar";
+import { useCurrentUser } from "../customHooks/useCurrentUser";
 
 function Homepage() {
+  useCurrentUser();
   const user = useSelector((state) => state.auth.user);
   const chatSessionID = useSelector((state) => state.auth.chatSessionID);
   const userName = user?.name;

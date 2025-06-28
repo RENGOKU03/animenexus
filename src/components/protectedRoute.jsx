@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { account } from "../lib/appwrite";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "../store/authSlice";
+import { Account, Client } from "appwrite";
 
 /**
  * ProtectedRoute component checks if a user is authenticated.
@@ -15,22 +16,28 @@ const ProtectedRoute = ({ children }) => {
   const isLoggedIn = useSelector((state) => state.auth.isAuthenticated);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
+  const client = new Client();
 
+  const account = new Account(client);
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const user = await account.get();
+        const session = await account.getSession("current");
+        console.log("Current session:", session);
 
+        const user = await account.get();
         dispatch(login(user));
       } catch (error) {
-        dispatch(logout());
+        console.log("Authentication check failed:", error);
+
+        // dispatch(logout());
       } finally {
         setIsLoading(false);
       }
     };
 
     checkAuth();
-  }, []);
+  }, [dispatch]);
 
   if (isLoading) {
     return (

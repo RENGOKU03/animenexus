@@ -93,7 +93,7 @@ function LoginForm() {
       </button>
 
       {/* Social Login Buttons Section */}
-      <SocialLoginButtons />
+      {/* <SocialLoginButtons /> */}
       <ErrorModal
         isOpen={errorModalOpen}
         onClose={() => setErrorModalOpen(false)}

@@ -1,15 +1,17 @@
 import { useDispatch } from "react-redux";
 import { account } from "../lib/appwrite";
+import { login, logout } from "../store/authSlice";
 import { OAuthProvider } from "appwrite";
 
 function SocialLoginButtons() {
   const dispatch = useDispatch();
   async function handleLoginWithGithub() {
     try {
-      account.createOAuth2Session(OAuthProvider.Github);
-      const user = await account.get();
-      console.log("User logged in with GitHub:", user);
-      dispatch(login(user));
+      account.createOAuth2Session(
+        OAuthProvider.Github,
+        "http://localhost:5173/homepage",
+        "http://localhost:5173/loginError"
+      );
     } catch (error) {
       console.error("Login with GitHub failed:", error);
       dispatch(logout());
