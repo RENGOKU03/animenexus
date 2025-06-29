@@ -158,14 +158,6 @@ export const useMessageHandler = (currentUser, addMessage, chatSessionID) => {
     [setApiError]
   ); // Dependency for useCallback: setApiError
 
-  /**
-   * Main function to send a message (user or silent suggestion) and get an AI response.
-   * It updates the UI, saves messages, and handles loading/error states.
-   * @param {string} text - The content of the message to send.
-   * @param {object} [options] - Optional settings for sending the message.
-   * @param {boolean} [options.isSilent=false] - If true, the user message will not be added to the UI immediately.
-   * @returns {string | null} The AI's response text, or null if an error occurred.
-   */
   const sendMessage = useCallback(
     async (text, { isSilent = false } = {}) => {
       if (!text.trim()) {

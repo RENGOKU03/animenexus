@@ -35,6 +35,11 @@ const ChatMessage = ({ message, index }) => {
             AI
           </div>
         )}
+        {isUser && (
+          <div className="absolute -right-3 -top-3 w-8 h-8 rounded-full bg-gradient-to-r from-pink-400 to-red-500 flex items-center justify-center text-white text-xs font-bold shadow-md">
+            You
+          </div>
+        )}
 
         <div className="prose prose-invert max-w-full break-words text-sm sm:text-base">
           <ReactMarkdown
