@@ -17,9 +17,6 @@ function LoginForm() {
   const dispatch = useDispatch();
   async function handleLogin() {
     try {
-      //clear any previous session
-      await account.deleteSession("current");
-      //create a new session with the provided email and password
       await account.createEmailPasswordSession(email, password);
       const user = await account.get();
       dispatch(login(user));
